@@ -1,13 +1,20 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# ============================================================
+#  STAR SHOP AUTO-INSTALLER v1.0
+#  Repo: nuxy1466-blip/STARPLUS
+#  Run:  bash <(curl -sL https://raw.githubusercontent.com/nuxy1466-blip/STARPLUS/main/star_shop.sh)
+# ============================================================
+
 OWNER_TAG="STAR SHOP"
 REPO_OWNER="nuxy1466-blip"
 REPO_NAME="STARPLUS"
-SCRIPT_VERSION="v1.1"
-DISCORD_LINK="https://discord.gg/39sar6cN"
+SCRIPT_VERSION="v1.0"
+DISCORD_LINK="https://discord.gg/your-invite"
 MAX_ATTEMPTS=3
 MAIN_PASSWORD="STAR99"
-VIP_PASSWORD="STARvv99"
+VIP_PASSWORD="STARVVIP993"
 RELEASE_TAG="${RELEASE_TAG:-V1.0}"
-DECRYPT_KEY="STAR99"
+DECRYPT_KEY="StarShop2025"
 
 # ---------- COLORS ----------
 C_RESET="\033[0m"
@@ -33,7 +40,7 @@ C_SUB="────────────────────────�
 hash -r 2>/dev/null
 stty sane 2>/dev/null
 
-# ---------- Progress bar ----------
+# Progress bar: draw_progress <percent> <label>
 draw_progress() {
     local pct="$1"
     local label="$2"
@@ -47,22 +54,15 @@ draw_progress() {
     echo -ne "${CR}  ${C_BLUE_BRIGHT}${bar}${C_RESET} ${C_WHITE}${pct}%${C_RESET} ${C_GREEN}✓${C_RESET} ${C_GRAY}${label}${C_RESET}        "
 }
 
-# ---------- Banner (บล็อกล้วน — ไม่มี backslash ไม่มีทางเพี้ยน) ----------
 print_banner() {
     clear
     echo -e "${C_SAPPHIRE}${C_DIV}${C_RESET}"
-    echo -e "${C_GOLD}  ███████╗████████╗ █████╗ ██████╗ ${C_RESET}"
-    echo -e "${C_GOLD}  ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗ ${C_RESET}"
-    echo -e "${C_GOLD}  ███████╗   ██║   ███████║██████╔╝ ${C_RESET}"
-    echo -e "${C_GOLD}  ╚════██║   ██║   ██╔══██║██╔══██╗ ${C_RESET}"
-    echo -e "${C_GOLD}  ███████║   ██║   ██║  ██║██║  ██║ ${C_RESET}"
-    echo -e "${C_GOLD}  ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ${C_RESET}"
-    echo -e "${C_BLUE_BRIGHT}        ███████╗ ██████╗ ██████╗ ██████╗${C_RESET}"
-    echo -e "${C_BLUE_BRIGHT}        ██╔════╝██╔════╝██╔═══██╗██╔══██╗${C_RESET}"
-    echo -e "${C_BLUE_BRIGHT}        ███████╗██║     ██║   ██║██████╔╝${C_RESET}"
-    echo -e "${C_BLUE_BRIGHT}        ╚════██║██║     ██║   ██║██╔═══╝${C_RESET}"
-    echo -e "${C_BLUE_BRIGHT}        ███████║╚██████╗╚██████╔╝██║${C_RESET}"
-    echo -e "${C_BLUE_BRIGHT}        ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝${C_RESET}"
+    echo -e "${C_GOLD}   _____ _    _ _____ __  _   _____ _    _ ______ _      _____ ${C_RESET}"
+    echo -e "${C_GOLD}  / ____| |  | / // /\ \\/ / |  ___| |  | |  ____| |    |_   _|${C_RESET}"
+    echo -e "${C_GOLD} | (___| |  | ' V /  \\  /  | |_  | |  | | |__  | |      | |  ${C_RESET}"
+    echo -e "${C_GOLD}  \\___ \\  _/ .  |  /  \\    |  _| | |  | |  __| | |      | |  ${C_RESET}"
+    echo -e "${C_GOLD}  ____) || |_| |\\_|_/ /\\ \\  | |   | |__| | |____| |____ _| |_ ${C_RESET}"
+    echo -e "${C_GOLD} |_____/ \\___/\\___//_/  \\_\\ |_|    \\____/\\______|______|_____|${C_RESET}"
     echo -e "  ${C_WHITE}${C_BOLD}★  STAR SHOP ${C_SAPPHIRE}[${C_YELLOW}${SCRIPT_VERSION}${C_SAPPHIRE}]  ${C_GRAY}Automated APK Installer  ★${C_RESET}"
     echo -e "${C_SAPPHIRE}${C_DIV}${C_RESET}"
 }
@@ -217,13 +217,25 @@ fetch_release_assets() {
     ERR_MSG=$(echo "$RESPONSE" | jq -r '.message // empty' 2>/dev/null)
     if [ -n "$ERR_MSG" ] && [ "$ERR_MSG" != "null" ]; then
         echo -e "  ${C_RED}❌ GitHub: $ERR_MSG${C_RESET}"
+        if [ "$ERR_MSG" == "Not Found" ]; then
+            echo ""
+            echo -e "  ${C_YELLOW}⚠️ วิธีแก้:${C_RESET}"
+            echo -e "  ${C_GRAY}1. ไปที่: https://github.com/${REPO_OWNER}/${REPO_NAME}/releases/new${C_RESET}"
+            echo -e "  ${C_GRAY}2. ตั้ง tag: ${C_WHITE}${RELEASE_TAG}${C_GRAY} (ตัวใหญ่!)${C_RESET}"
+            echo -e "  ${C_GRAY}3. อัปไฟล์ APK (Delta.1.apk, Delta.NoKey.1.apk, ...)${C_RESET}"
+            echo -e "  ${C_GRAY}4. กด ${C_WHITE}Publish release${C_GRAY} (ไม่ใช่ draft)${C_RESET}"
+            echo -e "  ${C_GRAY}5. รันสคริปต์ใหม่${C_RESET}"
+            echo ""
+            echo -e "  ${C_GRAY}แนะนำ: ถ้าใช้ tag 'v1.0' ให้แก้ RELEASE_TAG ในสคริปต์${C_RESET}"
+        fi
         return 1
     fi
 
     local COUNT
     COUNT=$(echo "$RESPONSE" | jq -r '.assets | length' 2>/dev/null)
     if [ -z "$COUNT" ] || [ "$COUNT" == "null" ] || [ "$COUNT" -eq 0 ] 2>/dev/null; then
-        echo -e "  ${C_YELLOW}⚠️ Release '${RELEASE_TAG}' ยังไม่มีสินค้า${C_RESET}"
+        echo -e "  ${C_YELLOW}⚠️ Release '${RELEASE_TAG}' ยังไม่มี APK${C_RESET}"
+        echo -e "  ${C_GRAY}อัปได้: https://github.com/${REPO_OWNER}/${REPO_NAME}/releases${C_RESET}"
         return 1
     fi
 
@@ -244,7 +256,7 @@ fetch_release_assets() {
         i=$((i + 1))
     done
 
-    echo -e "  ${C_GREEN}✔ พบ ${#ASSET_NAMES[@]} สินค้าใน release '${RELEASE_TAG}'${C_RESET}"
+    echo -e "  ${C_GREEN}✔ พบ ${#ASSET_NAMES[@]} APK ใน release '${RELEASE_TAG}'${C_RESET}"
     sleep 0.5
     return 0
 }
@@ -260,8 +272,6 @@ filter_by_category() {
                 case "$N" in
                     "Delta.NoKey."*)  [ "$PREFIX" != "Delta.NoKey."  ] && continue ;;
                     "Delta_NoKey_"*)  [ "$PREFIX" != "Delta_NoKey_"  ] && continue ;;
-                    "Delta.Root."*)   [ "$PREFIX" != "Delta.Root."   ] && continue ;;
-                    "Delta_Root_"*)   [ "$PREFIX" != "Delta_Root_"   ] && continue ;;
                 esac
                 FILTERED_INDICES+=($i)
                 ;;
@@ -279,9 +289,9 @@ install_apk() {
     echo -e "  ${C_SUB}${C_RESET}"
     rm -f "$TEMP_ENC" "$TEMP_APK"
 
-    local IS_ENC=0 DL_TARGET="$TEMP_APK"
+    local IS_ENC=0 DL_TARGET="$TEMP_APK" TAG="plain"
     case "$NAME" in
-        *.enc|*.ENC) IS_ENC=1; DL_TARGET="$TEMP_ENC";;
+        *.enc|*.ENC) IS_ENC=1; DL_TARGET="$TEMP_ENC"; TAG="enc";;
     esac
 
     local SHORT_URL=$(echo "$URL" | sed 's|https://||; s|/[^/]*$|/...|')
@@ -320,10 +330,10 @@ install_apk() {
 
     if [ $IS_ENC -eq 1 ]; then
         if ! command -v openssl >/dev/null 2>&1; then
-            echo -e "  ${C_YELLOW}📦 ติดตั้ง openssl...${C_RESET}"
+            echo -e "  ${C_YELLOW}📦 ติดตั้ง openssl (~30-60s)...${C_RESET}"
             pkg install openssl-tool -y >/dev/null 2>&1
             command -v openssl >/dev/null 2>&1 || {
-                echo -e "  ${C_RED}❌ openssl ติดตั้งไม่ได้${C_RESET}"
+                echo -e "  ${C_RED}❌ openssl ลำเลิก${C_RESET}"
                 rm -f "$TEMP_ENC" "$TEMP_APK"
                 return 1
             }
@@ -333,19 +343,12 @@ install_apk() {
                 -in "$TEMP_ENC" -out "$TEMP_APK" \
                 -pass "pass:$DECRYPT_KEY" 2>/dev/null; then
             echo -e " ${C_RED}FAIL${C_RESET}"
-            echo -e "  ${C_RED}❌ ถอดรหัสล้มเหลว (key ไม่ตรง/ไฟล์เสีย)${C_RESET}"
+            echo -e "  ${C_RED}❌ ถอดรหัสล้มเหลว${C_RESET}"
             rm -f "$TEMP_ENC" "$TEMP_APK"
             return 1
         fi
         echo -e " ${C_GREEN}OK${C_RESET}"
         rm -f "$TEMP_ENC"
-    fi
-
-    # ตรวจว่า APK สมบูรณ์ก่อนติดตั้ง
-    if ! unzip -l "$TEMP_APK" 2>/dev/null | grep -q "AndroidManifest.xml"; then
-        echo -e "  ${C_RED}❌ APK เสีย (ไม่มี AndroidManifest) — แจ้งผู้ขาย${C_RESET}"
-        rm -f "$TEMP_APK"
-        return 1
     fi
 
     chmod 644 "$TEMP_APK" 2>/dev/null
@@ -359,7 +362,7 @@ install_apk() {
             echo ""
             echo -e "  ${C_GREEN}✔ ติดตั้งเรียบร้อย (rooted)${C_RESET}"
         else
-            echo -e "  ${C_RED}❌ pm install ไม่ผ่าน — เปิด installer แทน...${C_RESET}"
+            echo -e "  ${C_RED}❌ เปิด installer...${C_RESET}"
             termux-open --content-type "application/vnd.android.package-archive" "$TEMP_APK"
             stty sane 2>/dev/null
         fi
@@ -381,8 +384,9 @@ process_category() {
 
     if [ "$TOTAL" -eq 0 ]; then
         echo ""
-        echo -e "  ${C_YELLOW}⚠️ หมวด '$CATEGORY_LABEL' ยังไม่มีสินค้า${C_RESET}"
+        echo -e "  ${C_YELLOW}⚠️ หมวด '$CATEGORY_LABEL' ยังไม่มี APK${C_RESET}"
         echo -e "  ${C_GRAY}ต้องชื่อไฟล์ขึ้นต้นด้วย: '$CATEGORY_PREFIX'${C_RESET}"
+        echo -e "  ${C_GRAY}อัปได้: https://github.com/${REPO_OWNER}/${REPO_NAME}/releases${C_RESET}"
         echo -ne "  ${C_YELLOW}กด Enter เพื่อดำเนินการต่อ...${C_RESET}"
         read
         return 0
@@ -392,7 +396,7 @@ process_category() {
         clear
         stty sane 2>/dev/null
         print_banner
-        echo -e "  ${C_YELLOW}■ ${C_WHITE}${C_BOLD}หมวด: ${C_GREEN}${CATEGORY_LABEL}${C_RESET}  ${C_GRAY}(${TOTAL} สินค้า)${C_RESET}"
+        echo -e "  ${C_YELLOW}■ ${C_WHITE}${C_BOLD}ทางเลือก: ${C_GREEN}${CATEGORY_LABEL}${C_RESET}  ${C_GRAY}(${TOTAL} ตัวเลือก)${C_RESET}"
         echo -e "  ${C_SAPPHIRE}${C_SUB}${C_RESET}"
         echo ""
 
@@ -406,10 +410,10 @@ process_category() {
 
         echo ""
         echo -e "  ${C_SAPPHIRE}${C_SUB}${C_RESET}"
-        echo -e "  ${C_GRAY}เลือก : ตัวเลข (1-${TOTAL}) · ช่วง (1-3) · all · 0=ถอย${C_RESET}"
+        echo -e "  ${C_GRAY}พิมพ์รายละเอียด : ตัวเลข (1-${TOTAL}) · ช่วง (1-3) · all · 0=ถอย${C_RESET}"
         echo ""
 
-        echo -ne "${CR}  ${C_YELLOW}● ${C_WHITE}เลือก: ${C_RESET}"
+        echo -ne "${CR}  ${C_YELLOW}● ${C_WHITE}เลือกทางเลือก: ${C_RESET}"
         read INPUT_CHOICE
         echo ""
 
@@ -451,7 +455,9 @@ process_category() {
             stty sane 2>/dev/null
             print_banner
             local N_SEL=${#SELECTED[@]}
-            echo -e "  ${C_GREEN}${C_BOLD}🚀 กำลังติดตั้ง ${N_SEL} รายการ${C_RESET}"
+            local PLURAL=""
+            [ "$N_SEL" -gt 1 ] && PLURAL="s"
+            echo -e "  ${C_GREEN}${C_BOLD}🚀 กำลังติดตั้ง ${N_SEL} APK${PLURAL}${C_RESET}"
             echo -e "  ${C_SAPPHIRE}${C_DIV}${C_RESET}"
             echo ""
 
@@ -501,25 +507,18 @@ main() {
             filter_by_category "Delta_NoKey_"
             N_NOKEY=${#FILTERED_INDICES[@]}
         fi
-        filter_by_category "Delta.Root."
-        local N_ROOT=${#FILTERED_INDICES[@]}
-        if [ "$N_ROOT" -eq 0 ]; then
-            filter_by_category "Delta_Root_"
-            N_ROOT=${#FILTERED_INDICES[@]}
-        fi
 
-        echo -e "  ${C_YELLOW}■ ${C_WHITE}${C_BOLD}หมวดหมู่สินค้า${C_RESET}"
+        echo -e "  ${C_YELLOW}■ ${C_WHITE}${C_BOLD}ทางเลือก${C_RESET}  ${C_GRAY}(เลือกหมวดหมู่)${C_RESET}"
         echo -e "  ${C_SAPPHIRE}${C_SUB}${C_RESET}"
         echo -e "  ${C_GREEN}[1]${C_RESET} ${C_GOLD}►${C_RESET} ${C_WHITE}Delta${C_RESET}            ${C_GRAY}(${N_DELTA} ตัว)${C_RESET}"
         echo -e "  ${C_GREEN}[2]${C_RESET} ${C_GOLD}►${C_RESET} ${C_PINK}Delta No Key 💎${C_RESET}  ${C_GRAY}(${N_NOKEY} ตัว) ${C_YELLOW}[VIP]${C_RESET}"
-        echo -e "  ${C_GREEN}[3]${C_RESET} ${C_GOLD}►${C_RESET} ${C_EMERALD}Delta ROOT 🔒${C_RESET}   ${C_GRAY}(${N_ROOT} ตัว) ${C_YELLOW}[root เท่านั้น]${C_RESET}"
         echo -e "  ${C_RED}   [0]${C_RESET} ${C_RED}►${C_RESET} ${C_RED}Exit${C_RESET}"
         echo ""
         echo -e "  ${C_SAPPHIRE}${C_SUB}${C_RESET}"
-        echo -e "  ${C_GRAY}เลือก : 0-3${C_RESET}"
+        echo -e "  ${C_GRAY}พิมพ์รายละเอียด : 0-2${C_RESET}"
         echo ""
 
-        echo -ne "${CR}  ${C_YELLOW}● ${C_WHITE}เลือก: ${C_RESET}"
+        echo -ne "${CR}  ${C_YELLOW}● ${C_WHITE}เลือกทางเลือก: ${C_RESET}"
         read MAIN_CHOICE
         echo ""
 
@@ -535,23 +534,9 @@ main() {
                     process_category "Delta No Key" "$NOKEY_PREFIX"
                 fi
                 ;;
-            3)
-                if ! command -v su >/dev/null 2>&1 || ! su -c "true" >/dev/null 2>&1; then
-                    echo -e "  ${C_RED}❌ หมวดนี้สำหรับเครื่อง ROOT เท่านั้น${C_RESET}"
-                    echo -e "  ${C_GRAY}   (แอปที่ได้จะมีบัญชีฝังอยู่แล้ว ต้อง root ถึงติดตั้งได้)${C_RESET}"
-                    sleep 2
-                    continue
-                fi
-                local ROOT_PREFIX="Delta.Root."
-                filter_by_category "$ROOT_PREFIX"
-                if [ ${#FILTERED_INDICES[@]} -eq 0 ]; then
-                    ROOT_PREFIX="Delta_Root_"
-                fi
-                process_category "Delta ROOT" "$ROOT_PREFIX"
-                ;;
             0) break ;;
             *)
-                echo -e "  ${C_RED}[!] ไม่ถูกต้อง (เลือก 0-3)${C_RESET}"
+                echo -e "  ${C_RED}[!] ไม่ถูกต้อง (เลือก 0-2)${C_RESET}"
                 sleep 1.2
                 ;;
         esac
