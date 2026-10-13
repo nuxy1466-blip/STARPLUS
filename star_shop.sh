@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 # ============================================================
-#  STAR SHOP AUTO-INSTALLER v2.0  —  UI refresh
+#  STAR SHOP AUTO-INSTALLER v2.1  —  ZONE VIP + extra category
 #  Repo: nuxy1466-blip/STARPLUS
 #  Run:  bash <(curl -sL https://raw.githubusercontent.com/nuxy1466-blip/STARPLUS/main/star_shop.sh)
 # ============================================================
@@ -8,7 +8,7 @@
 OWNER_TAG="STAR SHOP"
 REPO_OWNER="nuxy1466-blip"
 REPO_NAME="STARPLUS"
-SCRIPT_VERSION="v2.0"
+SCRIPT_VERSION="v2.1"
 DISCORD_LINK="https://discord.gg/C7QXmJWU"
 MAX_ATTEMPTS=3
 MAIN_PASSWORD="STAR99"
@@ -16,6 +16,10 @@ VIP_PASSWORD="STARVVIP993"
 RELEASE_TAG="${RELEASE_TAG:-V1.0}"
 DECRYPT_KEY="STAR99"
 DL_DIR="${DL_DIR:-/sdcard/Download}"
+
+# --- หมวดที่ 3 (APK แยกจากตัวเลือก 1) : แก้ชื่อ/คำนำหน้าไฟล์ตรงนี้ ---
+CAT3_LABEL="Other"        # ชื่อที่แสดงในเมนู
+CAT3_PREFIX="Other."      # ไฟล์ APK ใน release ต้องขึ้นต้นด้วยคำนี้ เช่น Other.1.apk
 
 hash -r 2>/dev/null
 stty sane 2>/dev/null
@@ -265,15 +269,15 @@ check_main_password() {
 
 check_vip_password() {
     print_banner mini
-    if password_gate "💎 VIP ACCESS · ยืนยันตัวตนเพิ่มเติม" "$VIP_PASSWORD" "$C_GOLD"; then
-        ok "${C_GOLD}${BOLD}VIP ACCESS GRANTED${RST}"
+    if password_gate "💎 ZONE VIP · ยืนยันตัวตนเพิ่มเติม" "$VIP_PASSWORD" "$C_GOLD"; then
+        ok "${C_GOLD}${BOLD}ZONE VIP ACCESS GRANTED${RST}"
         card_bot
         sleep 0.8
         return 0
     fi
     card_bot
     echo
-    echo "  ${C_RED}🚫 VIP access denied · กลับไปเมนูหลัก...${RST}"
+    echo "  ${C_RED}🚫 ZONE VIP access denied · กลับไปเมนูหลัก...${RST}"
     sleep 1.5
     return 1
 }
@@ -366,6 +370,8 @@ filter_by_category() {
                 case "$N" in
                     "Delta.NoKey."*)  [ "$PREFIX" != "Delta.NoKey."  ] && continue ;;
                     "Delta_NoKey_"*)  [ "$PREFIX" != "Delta_NoKey_"  ] && continue ;;
+                    "Delta.Lite."*)   [ "$PREFIX" != "Delta.Lite."   ] && continue ;;
+                    "Delta_Lite_"*)   [ "$PREFIX" != "Delta_Lite_"   ] && continue ;;
                 esac
                 FILTERED_INDICES+=($i)
                 ;;
@@ -605,6 +611,55 @@ process_category() {
 # ============================================================
 #  MAIN
 # ============================================================
+# --- ZONE VIP : หาคำนำหน้าไฟล์ (รองรับทั้งจุดและขีดล่าง) ---
+pick_prefix() {    # pick_prefix <dot-prefix> <underscore-prefix>  -> $PICKED_PREFIX
+    PICKED_PREFIX="$1"
+    filter_by_category "$1"
+    if [ ${#FILTERED_INDICES[@]} -eq 0 ]; then
+        PICKED_PREFIX="$2"
+    fi
+}
+
+count_vip_items() {
+    pick_prefix "Delta.NoKey." "Delta_NoKey_"
+    VIP_NOKEY_PREFIX="$PICKED_PREFIX"
+    filter_by_category "$VIP_NOKEY_PREFIX"
+    N_VIP_NOKEY=${#FILTERED_INDICES[@]}
+
+    pick_prefix "Delta.Lite." "Delta_Lite_"
+    VIP_LITE_PREFIX="$PICKED_PREFIX"
+    filter_by_category "$VIP_LITE_PREFIX"
+    N_VIP_LITE=${#FILTERED_INDICES[@]}
+}
+
+vip_zone_menu() {
+    local CHOICE
+    while true; do
+        stty sane 2>/dev/null
+        count_vip_items
+        print_banner mini
+        card_title "💎 ZONE VIP"
+        menu_row 1 "Delta NoKey" "$N_VIP_NOKEY" ""
+        menu_row 2 "Delta Lite" "$N_VIP_LITE" ""
+        card_blank
+        card_row "${C_RED}[0]${RST} ${C_RED}ย้อนกลับ${RST}"
+        card_bot
+        echo
+        printf '  %s❯%s ' "$C_BLUE" "$RST"
+        read -r CHOICE
+        case "$CHOICE" in
+            1) process_category "Delta NoKey 💎" "$VIP_NOKEY_PREFIX" ;;
+            2) process_category "Delta Lite 💎" "$VIP_LITE_PREFIX" ;;
+            0) return 0 ;;
+            *)
+                echo
+                echo "  ${C_RED}✖ ไม่ถูกต้อง${RST} ${C_GRAY}(เลือก 0-2)${RST}"
+                sleep 1.2
+                ;;
+        esac
+    done
+}
+
 show_home() {
     print_banner mini
     card_top
@@ -623,10 +678,15 @@ show_home() {
         filter_by_category "Delta_NoKey_"
         N_NOKEY=${#FILTERED_INDICES[@]}
     fi
+    filter_by_category "$CAT3_PREFIX"
+    N_CAT3=${#FILTERED_INDICES[@]}
+    count_vip_items
+    N_VIP=$((N_VIP_NOKEY + N_VIP_LITE))
 
     card_title "⚡ เลือกหมวดหมู่"
     menu_row 1 "Delta" "$N_DELTA" ""
-    menu_row 2 "Delta No Key" "$N_NOKEY" "${C_GOLD}VIP 💎${RST}"
+    menu_row 2 "ZONE VIP" "$N_VIP" "${C_GOLD}VIP 💎${RST}"
+    menu_row 3 "$CAT3_LABEL" "$N_CAT3" ""
     card_blank
     card_row "${C_RED}[0]${RST} ${C_RED}Exit${RST}"
     card_bot
@@ -668,18 +728,14 @@ main() {
             1) process_category "Delta" "Delta." ;;
             2)
                 if check_vip_password; then
-                    local NOKEY_PREFIX="Delta.NoKey."
-                    filter_by_category "$NOKEY_PREFIX"
-                    if [ ${#FILTERED_INDICES[@]} -eq 0 ]; then
-                        NOKEY_PREFIX="Delta_NoKey_"
-                    fi
-                    process_category "Delta No Key 💎" "$NOKEY_PREFIX"
+                    vip_zone_menu
                 fi
                 ;;
+            3) process_category "$CAT3_LABEL" "$CAT3_PREFIX" ;;
             0) break ;;
             *)
                 echo
-                echo "  ${C_RED}✖ ไม่ถูกต้อง${RST} ${C_GRAY}(เลือก 0-2)${RST}"
+                echo "  ${C_RED}✖ ไม่ถูกต้อง${RST} ${C_GRAY}(เลือก 0-3)${RST}"
                 sleep 1.2
                 ;;
         esac
