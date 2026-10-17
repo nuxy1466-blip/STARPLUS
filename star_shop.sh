@@ -18,8 +18,8 @@ DECRYPT_KEY="STAR99"
 DL_DIR="${DL_DIR:-/sdcard/Download}"
 
 # --- หมวดที่ 3 (APK แยกจากตัวเลือก 1) : แก้ชื่อ/คำนำหน้าไฟล์ตรงนี้ ---
-CAT3_LABEL="Other"        # ชื่อที่แสดงในเมนู
-CAT3_PREFIX="Other."      # ไฟล์ APK ใน release ต้องขึ้นต้นด้วยคำนี้ เช่น Other.1.apk
+CAT3_LABEL="ArceusX"
+CAT3_PREFIX="ArceusX."
 
 hash -r 2>/dev/null
 stty sane 2>/dev/null
